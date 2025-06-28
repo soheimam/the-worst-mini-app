@@ -8,8 +8,14 @@ export default function HapticButton() {
   const openUrl = useOpenUrl();
 
   const handleClick = useCallback(async () => {
-    // Trigger medium impact haptic feedback
-    await sdk.haptics.impactOccurred('medium');
+    // Trigger selection feedback first (immediate response)
+    await sdk.haptics.selectionChanged();
+    
+    // Trigger heavy impact feedback (more noticeable)
+    await sdk.haptics.impactOccurred('heavy');
+    
+    // Trigger success notification feedback
+    await sdk.haptics.notificationOccurred('success');
     
     // Open Google in a new tab/window
     openUrl("https://google.com");
