@@ -8,25 +8,13 @@ import { Icon } from '../components/DemoComponents';
 
 export default function MiniAppCheckPage() {
   const [isMiniApp, setIsMiniApp] = useState<boolean | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     const checkMiniApp = async () => {
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        // Check if running in a Mini App with 100ms timeout (default)
-        const result = await sdk.isInMiniApp();
-        setIsMiniApp(result);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to check mini app status');
-        setIsMiniApp(false);
-      } finally {
-        setIsLoading(false);
-      }
+      // Check if running in a Mini App
+      const result = await sdk.isInMiniApp();
+      setIsMiniApp(result);
     };
 
     checkMiniApp();
@@ -37,18 +25,9 @@ export default function MiniAppCheckPage() {
   };
 
   const handleRecheck = async () => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const result = await sdk.isInMiniApp();
-      setIsMiniApp(result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to check mini app status');
-      setIsMiniApp(false);
-    } finally {
-      setIsLoading(false);
-    }
+    // Check if running in a Mini App
+    const result = await sdk.isInMiniApp();
+    setIsMiniApp(result);
   };
 
   return (
@@ -74,35 +53,16 @@ export default function MiniAppCheckPage() {
               Is this running in a Mini App?
             </h2>
 
-            {/* Loading State */}
-            {isLoading && (
+            {isMiniApp === null ? (
+              // Loading State
               <div className="flex flex-col items-center space-y-3">
                 <div className="animate-spin h-8 w-8 border-2 border-[var(--app-accent)] border-t-transparent rounded-full"></div>
                 <p className="text-[var(--ock-text-foreground-muted)]">
                   Checking environment...
                 </p>
               </div>
-            )}
-
-            {/* Error State */}
-            {error && !isLoading && (
-              <div className="text-center">
-                <div className="bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-lg p-4 mb-4">
-                  <p className="text-red-700 dark:text-red-400 font-medium">Error</p>
-                  <p className="text-red-600 dark:text-red-300 text-sm mt-1">{error}</p>
-                </div>
-                <Button
-                  variant="ghost"
-                  onClick={handleRecheck}
-                  className="text-[var(--app-accent)]"
-                >
-                  Try Again
-                </Button>
-              </div>
-            )}
-
-            {/* Result State */}
-            {!isLoading && !error && isMiniApp !== null && (
+            ) : (
+              // Result State
               <div className="text-center">
                 <div className={`rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center ${
                   isMiniApp 
